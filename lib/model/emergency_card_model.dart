@@ -1,6 +1,8 @@
 import 'package:amsafe/main.dart';
+import 'package:amsafe/utils/sized_box.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyCard extends StatelessWidget {
@@ -37,8 +39,8 @@ class EmergencyCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: Theme.of(context).mainColor,
         ),
-        width: 198,
-        height: 114,
+        width: 50.w,
+        height: 15.h,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -46,96 +48,95 @@ class EmergencyCard extends StatelessWidget {
               title,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
             ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 32, right: 32),
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xffa3001a),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(.25),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            )
-                          ]),
-                      child: Center(
-                        child: Text(
-                          num1.toString(),
-                          style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).whiteText,
-                          ),
+            sizedBoxHeight20,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 8.w,
+                  height: 3.6.h,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color(0xffa3001a),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(.25),
+                            blurRadius: 4,
+                            offset: Offset(0, 4),
+                          )
+                        ]),
+                    child: Center(
+                      child: Text(
+                        num1.toString(),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).whiteText,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xffa3001a),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(.25),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            )
-                          ]),
-                      child: Center(
-                          child: Text(
+                ),
+                sizedBoxWidth30,
+                Container(
+                  width: 8.w,
+                  height: 3.6.h,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xffa3001a),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.25),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                        )
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
                         num2.toString(),
                         style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w700,
                           color: Theme.of(context).whiteText,
                         ),
-                      )),
+                      ),
                     ),
                   ),
-                  SizedBox(width: 20),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xffa3001a),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(.25),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            )
-                          ]),
-                      child: Center(
-                        child: Text(
-                          num3.toString(),
-                          style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).whiteText,
-                          ),
+                ),
+                sizedBoxWidth30,
+                Container(
+                  width: 8.w,
+                  height: 3.6.h,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xffa3001a),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.25),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                        )
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        num3.toString(),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).whiteText,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:amsafe/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MyBottomNav extends StatelessWidget {
   final void Function(int)? onTabChanges;
@@ -10,15 +11,15 @@ class MyBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.all(0.8.h),
         child: GNav(
           color: Colors.grey[400],
           activeColor: Theme.of(context).whiteText,
           tabBackgroundColor: Theme.of(context).mainColor,
-          gap: 5,
+          gap: 6,
           mainAxisAlignment: MainAxisAlignment.center,
           onTabChange: (value) => onTabChanges!(value),
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(2.5.h),
           tabs: [
             GButton(
               icon: Icons.home,

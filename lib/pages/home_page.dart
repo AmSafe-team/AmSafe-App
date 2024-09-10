@@ -1,10 +1,12 @@
 import 'package:amsafe/components/my_appbar.dart';
+import 'package:amsafe/utils/sized_box.dart';
 import 'package:amsafe/widget/app_emergency.dart';
 import 'package:amsafe/widget/app_live_safe.dart';
 import 'package:amsafe/widget/app_sos_button.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class HomePage extends StatelessWidget {
   final List<Contact> selectedContacts;
@@ -42,42 +44,41 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            sizedBoxHeight20,
             //! Emergency Contact
             Padding(
-              padding: const EdgeInsets.only(left: 20),
+              padding: EdgeInsets.only(left: 5.w),
               child: Text(
                 "Emergency Contact",
                 style: GoogleFonts.inter(
-                  fontSize: 18,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.start,
               ),
             ),
-            SizedBox(height: 10),
+            sizedBoxHeight10,
             //! Emergency cards
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 2.w),
               child: emergencyCardList(context),
             ),
-            SizedBox(height: 10),
+            sizedBoxHeight10,
             //! Live safe
             Padding(
-              padding: const EdgeInsets.only(left: 20),
+              padding: EdgeInsets.only(left: 5.w),
               child: Text(
                 "Explore LiveSafe",
                 style: GoogleFonts.inter(
-                  fontSize: 18,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.start,
               ),
             ),
-            SizedBox(height: 10),
+            sizedBoxHeight10,
             //! Emergency cards
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+            Center(
               child: liveSafeChips(context),
             ),
           ],
