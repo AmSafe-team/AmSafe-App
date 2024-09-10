@@ -1,4 +1,3 @@
-import 'package:amsafe/components/my_appbar.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -7,7 +6,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: my_appbar(context),
       body: Center(
         child: Column(
           children: [

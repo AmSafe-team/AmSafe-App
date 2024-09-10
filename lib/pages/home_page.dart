@@ -1,4 +1,3 @@
-import 'package:amsafe/components/my_appbar.dart';
 import 'package:amsafe/utils/sized_box.dart';
 import 'package:amsafe/widget/app_emergency.dart';
 import 'package:amsafe/widget/app_live_safe.dart';
@@ -15,8 +14,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //! appbar
-      appBar: my_appbar(context),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,10 +1,13 @@
 import 'package:amsafe/components/my_bottom_nav.dart';
+import 'package:amsafe/main.dart';
 import 'package:amsafe/pages/chat_page.dart';
 import 'package:amsafe/pages/contact_page.dart';
 import 'package:amsafe/pages/home_page.dart';
 import 'package:amsafe/pages/settings_page.dart';
+import 'package:amsafe/widget/app_drawer.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -49,6 +52,30 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
+        title: Text(
+          "AmSafe",
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).mainColor,
+          ),
+        ),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(Icons.menu_outlined),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              color: Colors.black,
+            );
+          },
+        ),
+      ),
+      drawer: AppDrawer(),
       body: pages[selectedIndex],
       bottomNavigationBar: MyBottomNav(
         onTabChanges: (index) => navigateBottomBar(index),
