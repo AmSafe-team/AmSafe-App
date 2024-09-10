@@ -26,6 +26,10 @@ class MyApp extends StatelessWidget {
           title: 'AmSafe',
           theme: ThemeData(
             scaffoldBackgroundColor: Colors.white,
+            appBarTheme: AppBarTheme(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+            ),
             useMaterial3: true,
           ),
           home: const SplashPage(),
