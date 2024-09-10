@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 import 'package:amsafe/main.dart';
+import 'package:amsafe/utils/sized_box.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LiveSafeChip extends StatelessWidget {
@@ -32,7 +34,7 @@ class LiveSafeChip extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(1.5.h),
             decoration: BoxDecoration(
               color: Theme.of(context).mainColor,
               borderRadius: BorderRadius.circular(12),
@@ -47,11 +49,11 @@ class LiveSafeChip extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              size: 30,
+              size: 3.5.h,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 8),
+          sizedBoxHeight10,
           Text(
             label,
             style: TextStyle(
