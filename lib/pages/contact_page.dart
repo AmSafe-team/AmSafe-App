@@ -1,6 +1,7 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ContactPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class ContactPage extends StatefulWidget {
 class _ContactPageState extends State<ContactPage> {
   List<Contact> contacts = [];
   List<Contact> selectedContacts = [];
+  final box = GetStorage();
 
   @override
   void initState() {
@@ -25,11 +27,25 @@ class _ContactPageState extends State<ContactPage> {
 
   Future<void> _loadContacts() async {
     if (await Permission.contacts.request().isGranted) {
-      final contactList = await ContactsService.getContacts();
+      final contactList =
+          await FlutterContacts.getContacts(withProperties: true);
       setState(() {
-        contacts = contactList.toList();
+        contacts = contactList;
       });
+
+      //! Load saved selected contacts
+      List<String>? savedContacts = box.read<List<String>>('selectedContacts');
+      if (savedContacts != null) {
+        selectedContacts = contacts.where((contact) {
+          return savedContacts.contains(contact.id);
+        }).toList();
+      }
     }
+  }
+
+  void _saveSelectedContacts() {
+    List<String> contactIds = selectedContacts.map((c) => c.id).toList();
+    box.write('selectedContacts', contactIds); // Save selected contact IDs
   }
 
   @override
@@ -42,16 +58,14 @@ class _ContactPageState extends State<ContactPage> {
             icon: const Icon(Icons.check),
             onPressed: () {
               if (selectedContacts.isNotEmpty) {
-                widget.onContactsSelected(
-                    selectedContacts); // Pass selected contacts back
-                // Show feedback and navigate back to the previous page
+                widget.onContactsSelected(selectedContacts);
+                _saveSelectedContacts(); // Save contacts when selected
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                       content: Text('Contacts selected successfully!')),
                 );
                 Get.back();
               } else {
-                // Show feedback for empty selection
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('No contacts selected')),
                 );
@@ -67,7 +81,7 @@ class _ContactPageState extends State<ContactPage> {
               itemBuilder: (context, index) {
                 Contact contact = contacts[index];
                 return ListTile(
-                  title: Text(contact.displayName ?? 'Unknown'),
+                  title: Text(contact.displayName),
                   trailing: Checkbox(
                     value: selectedContacts.contains(contact),
                     onChanged: (bool? selected) {

@@ -1,13 +1,13 @@
-import 'package:amsafe/components/my_bottom_nav.dart';
 import 'package:amsafe/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:amsafe/pages/chat_page.dart';
 import 'package:amsafe/pages/contact_page.dart';
 import 'package:amsafe/pages/home_page.dart';
 import 'package:amsafe/pages/settings_page.dart';
+import 'package:amsafe/components/my_bottom_nav.dart';
 import 'package:amsafe/widget/app_drawer.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -29,7 +29,6 @@ class _MenuPageState extends State<MenuPage> {
   void updateSelectedContacts(List<Contact> contacts) {
     setState(() {
       selectedContacts = contacts;
-      // Rebuild HomePage with updated contacts
       pages[0] = HomePage(selectedContacts: selectedContacts);
     });
   }
@@ -42,9 +41,7 @@ class _MenuPageState extends State<MenuPage> {
     pages.addAll([
       HomePage(selectedContacts: selectedContacts),
       ChatPage(),
-      ContactPage(
-        onContactsSelected: updateSelectedContacts,
-      ),
+      ContactPage(onContactsSelected: updateSelectedContacts),
       SettingsPage(),
     ]);
   }
@@ -55,7 +52,6 @@ class _MenuPageState extends State<MenuPage> {
       appBar: AppBar(
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.white,
         title: Text(
           "AmSafe",
           style: GoogleFonts.poppins(
@@ -78,7 +74,7 @@ class _MenuPageState extends State<MenuPage> {
       drawer: AppDrawer(),
       body: pages[selectedIndex],
       bottomNavigationBar: MyBottomNav(
-        onTabChanges: (index) => navigateBottomBar(index),
+        onTabChanges: navigateBottomBar,
       ),
     );
   }

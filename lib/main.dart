@@ -1,5 +1,5 @@
 import 'package:amsafe/controller/auth_controller.dart';
-import 'package:amsafe/services/auth/auth_gate.dart';
+import 'package:amsafe/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          home: AuthGate(),
+          home: SplashPage(),
         );
       },
     );

@@ -1,9 +1,13 @@
 // ignore_for_file: deprecated_member_use
+
 import 'package:amsafe/main.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:telephony/telephony.dart';
 
 class AppSosButton extends StatefulWidget {
@@ -17,7 +21,68 @@ class AppSosButton extends StatefulWidget {
 
 class _AppSosButtonState extends State<AppSosButton> {
   final Telephony telephony = Telephony.instance;
-  final List<Contact> selectedContacts = [];
+  bool isSending = false; // For loading spinner
+  final box = GetStorage(); // For storing user settings
+  bool isShakeEnabled = false;
+  int shakeThreshold = 5;
+  double lastX = 0, lastY = 0, lastZ = 0;
+  int shakeCount = 0;
+  List<Contact> selectedContacts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedContacts();
+    isShakeEnabled =
+        box.read('shakeEnabled') ?? false; // Read the shake toggle setting
+
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      // print('Accelerometer event: x=${event.x}, y=${event.y}, z=${event.z}');
+
+      if (isShakeEnabled) {
+        double diffX = (event.x - lastX).abs();
+        double diffY = (event.y - lastY).abs();
+        double diffZ = (event.z - lastZ).abs();
+
+        // print('Shake differences: diffX=$diffX, diffY=$diffY, diffZ=$diffZ');
+
+        if ((diffX > shakeThreshold ||
+            diffY > shakeThreshold ||
+            diffZ > shakeThreshold)) {
+          shakeCount++;
+          print('Shake count: $shakeCount');
+
+          if (shakeCount > 2) {
+            _sendSOS();
+            print("Shake detected! Sending SOS...");
+            shakeCount = 0;
+          }
+        }
+
+        lastX = event.x;
+        lastY = event.y;
+        lastZ = event.z;
+      }
+    });
+  }
+
+  void _loadSavedContacts() {
+    List<dynamic>? savedContactIds = box.read('selectedContacts');
+    if (savedContactIds != null) {
+      // Convert List<dynamic> to List<String>
+      List<String> contactIds =
+          savedContactIds.map((id) => id.toString()).toList();
+
+      // Assuming you've loaded the contacts list elsewhere
+      List<Contact> allContacts = []; // Replace with your full contact list
+      setState(() {
+        selectedContacts = allContacts.where((contact) {
+          return contactIds.contains(contact.id);
+        }).toList();
+      });
+    }
+  }
+
   // Get location
   Future<String> _getLocation() async {
     bool serviceEnabled;
@@ -37,7 +102,7 @@ class _AppSosButtonState extends State<AppSosButton> {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return 'Location permissions are permanently denied, we cannot request permissions.';
+      return 'Location permissions are permanently denied.';
     }
 
     Position position = await Geolocator.getCurrentPosition(
@@ -46,15 +111,41 @@ class _AppSosButtonState extends State<AppSosButton> {
     return "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
   }
 
+  // Check SMS permission
+  Future<bool> _checkSmsPermission() async {
+    var status = await Permission.sms.status;
+    if (!status.isGranted) {
+      var result = await Permission.sms.request();
+      return result.isGranted;
+    }
+    return true;
+  }
+
   //! Function to send SOS message
   //! Function to send SOS message
   Future<void> _sendSOS() async {
     if (widget.selectedContacts.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select contacts to notify.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select contacts to notify.')),
+        );
+      }
       return;
     }
+
+    if (!await _checkSmsPermission()) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('SMS permission is required to send SOS.')),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      isSending = true; // Show loading
+    });
 
     try {
       // Get current location
@@ -63,17 +154,17 @@ class _AppSosButtonState extends State<AppSosButton> {
 
       List<String> recipients = [];
       for (var contact in widget.selectedContacts) {
-        if (contact.phones != null && contact.phones!.isNotEmpty) {
-          recipients.add(contact.phones!.first.value!);
+        if (contact.phones.isNotEmpty) {
+          recipients.add(contact.phones.first.number);
         }
       }
 
       if (recipients.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('No valid phone numbers found in selected contacts.')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No valid phone numbers found.')),
+          );
+        }
         return;
       }
 
@@ -84,15 +175,26 @@ class _AppSosButtonState extends State<AppSosButton> {
         );
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('SOS messages sent successfully')),
-      );
+      print("Shake detected! Sending SOS...");
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('SOS messages sent successfully')),
+        );
+      }
     } catch (e) {
       print('Error sending SOS: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to send SOS messages. Please try again.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send SOS messages.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSending = false; // Hide loading
+        });
+      }
     }
   }
 
@@ -100,48 +202,57 @@ class _AppSosButtonState extends State<AppSosButton> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return InkWell(
-      onTap: _sendSOS,
+      onTap: isSending ? null : _sendSOS,
       borderRadius: BorderRadius.circular(150),
-      child: Container(
-        padding: EdgeInsets.all(size.height * 0.03),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Theme.of(context).mainColor.withOpacity(.1),
-        ),
-        child: Container(
-          padding: EdgeInsets.all(size.height * 0.025),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Theme.of(context).mainColor.withOpacity(.3),
-          ),
-          child: Container(
-            width: size.height * .18,
-            height: size.height * .18,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(size.height * 0.03),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).mainColor,
+              color: Theme.of(context).mainColor.withOpacity(.3),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.touch_app,
-                  size: size.height * 0.05,
-                  color: Theme.of(context).whiteText,
+            child: Container(
+              padding: EdgeInsets.all(size.height * 0.025),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).mainColor.withOpacity(.5),
+              ),
+              child: Container(
+                width: size.height * .18,
+                height: size.height * .18,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).mainColor,
                 ),
-                SizedBox(height: 10),
-                Text(
-                  "SOS",
-                  style: GoogleFonts.poppins(
-                    fontSize: size.height * 0.038,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).whiteText,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.touch_app,
+                      size: size.height * 0.05,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "SOS",
+                      style: GoogleFonts.poppins(
+                        fontSize: size.height * 0.038,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (isSending)
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+        ],
       ),
     );
   }

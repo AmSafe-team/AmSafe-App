@@ -1,8 +1,10 @@
 import 'package:amsafe/components/my_drawer_tile.dart';
 import 'package:amsafe/controller/auth_controller.dart';
 import 'package:amsafe/main.dart';
+import 'package:amsafe/pages/chat_page.dart';
 import 'package:amsafe/pages/contact_page.dart';
 import 'package:amsafe/pages/menu_page.dart';
+import 'package:amsafe/pages/settings_page.dart';
 import 'package:amsafe/services/auth/auth_gate.dart';
 import 'package:amsafe/utils/sized_box.dart';
 import 'package:flutter/material.dart';
@@ -50,35 +52,25 @@ class AppDrawer extends StatelessWidget {
             text: "H O M E",
             icon: Icons.home,
             onTap: () {
-              Navigator.pop(context);
-              Get.offAll(
+              Get.to(
                 () => MenuPage(),
               );
             },
           ),
           //! profile list tile
           MyDrawerTile(
-            text: "P R O F I L E",
-            icon: Icons.person,
+            text: "C H A T",
+            icon: Icons.chat,
             onTap: () {
-              Navigator.pop(context);
-              Get.offAll(
-                () => MenuPage(),
+              Get.to(
+                () => ChatPage(),
               );
-            },
-          ),
-          //! about list tile
-          MyDrawerTile(
-            text: "A B O U T",
-            icon: Icons.info_outline,
-            onTap: () {
-              Navigator.pop(context);
             },
           ),
           //! contact us
           MyDrawerTile(
             text: "C O N T A C T",
-            icon: Icons.contact_mail,
+            icon: Icons.phone,
             onTap: () {
               Get.to(
                 () => ContactPage(
@@ -87,13 +79,24 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
+          //! about list tile
+          MyDrawerTile(
+            text: "S E T T I N G S",
+            icon: Icons.settings,
+            onTap: () {
+              Get.to(
+                () => SettingsPage(),
+              );
+            },
+          ),
+
           Spacer(),
           //! logout list tile
           MyDrawerTile(
             text: "L O G O U T",
             icon: Icons.settings,
             onTap: () {
-              logout();
+              // logout();
             },
           ),
           sizedBoxHeight20,

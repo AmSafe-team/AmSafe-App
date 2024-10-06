@@ -1,11 +1,11 @@
-import 'package:amsafe/utils/sized_box.dart';
-import 'package:amsafe/widget/app_emergency.dart';
-import 'package:amsafe/widget/app_live_safe.dart';
-import 'package:amsafe/widget/app_sos_button.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:amsafe/widget/app_sos_button.dart';
+import 'package:amsafe/utils/sized_box.dart';
+import 'package:amsafe/widget/app_emergency.dart';
+import 'package:amsafe/widget/app_live_safe.dart';
 
 class HomePage extends StatelessWidget {
   final List<Contact> selectedContacts;
@@ -18,7 +18,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //! Centering the following part
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -36,13 +35,11 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(color: Colors.grey),
                   ),
                   SizedBox(height: 10),
-                  //! SOS Button
                   AppSosButton(selectedContacts: selectedContacts),
                 ],
               ),
             ),
             sizedBoxHeight20,
-            //! Emergency Contact
             Padding(
               padding: EdgeInsets.only(left: 5.w),
               child: Text(
@@ -55,13 +52,11 @@ class HomePage extends StatelessWidget {
               ),
             ),
             sizedBoxHeight10,
-            //! Emergency cards
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 2.w),
               child: emergencyCardList(context),
             ),
             sizedBoxHeight10,
-            //! Live safe
             Padding(
               padding: EdgeInsets.only(left: 5.w),
               child: Text(
@@ -74,7 +69,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             sizedBoxHeight10,
-            //! Emergency cards
             Center(
               child: liveSafeChips(context),
             ),
